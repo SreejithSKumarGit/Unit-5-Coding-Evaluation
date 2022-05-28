@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task</title>
+</head>
+<body>
+    <form>
+    <input  id="taskName" type="text">
+    <input  id="status" type="checkbox">
+    <input  id="editBtn" type="submit" value="Edit">
+    </form>
+    <button onclick="deleteData()">DELETE</button>
+</body>
+<script>
+    document.querySelector('form').addEventListener('submit', function()
+    {
+        editData();
+        window.location.href="index.html";
+    });
+    async function editData()
+    {
+       
+        try {
+        
+        let id=localStorage.getItem('taskId');
+        let url=`http://localhost:3000/tasks/${id}`;
+        let task={
+            "title":document.getElementById("taskName").value,
+            "status":document.getElementById("status").checked,
+        }
+        let res=await fetch(`http://localhost:3000/tasks/${id}`,{
+                            method:"PUT",
+                            body:JSON.stringify(task),
+                            headers:{
+                                "Content-Type":"application/json"
+                            }
+                        });
+        let data=await res.json();
+        localStorage.removeItem('taskId');
+        
+        
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async function deleteData()
+    {
+        try {
+            let id=localStorage.getItem('taskId');
+            let url=`http://localhost:3000/tasks/${id}`;
+            let res=await fetch(url,{
+                            method:"DELETE"
+                        });
+            let data=await res.json();
+            localStorage.removeItem('taskId');
+            window.location.href="index.html";
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+</script>
+</html>
